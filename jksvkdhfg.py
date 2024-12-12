@@ -30,27 +30,27 @@ while running:
         if event.type == pygame.QUIT: 
             running = False
 
-keys = pygame.key.get_pressed() 
+    keys = pygame.key.get_pressed() 
 	
 	# if left arrow key is pressed 
-if keys[pygame.K_a] and x>0: 
+    if keys[pygame.K_a] and x>0: 
 		
 		# decrement in x co-ordinate 
-		x -= vel 
+		    x -= vel 
 		
 	# if left arrow key is pressed 
-if keys[pygame.K_d] and x<500-width: 
+    if keys[pygame.K_d] and x<500-width: 
 		
 		# increment in x co-ordinate 
-		x += vel 
+		    x += vel 
 		
 	# if left arrow key is pressed 
-if keys[pygame.K_w] and y>0: 
+    if keys[pygame.K_w] and y>0: 
 		
 		# decrement in y co-ordinate 
-		y -= vel 
+		    y -= vel 
 		
 	# if left arrow key is pressed 
-if keys[pygame.K_s] and y<500-height: 
+    if keys[pygame.K_s] and y<500-height: 
 		# increment in y co-ordinate 
-		y += vel 
+		    y += vel 
