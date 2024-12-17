@@ -4,10 +4,8 @@ test= open("items.json", encoding="utf8")
 items= json.load(test)
 import random
 
-with open ("shop.json", "r", encoding='utf-8-sig') as f:
-    shop_items = json.load(f)
 
-class shop:
+class item:
     def __init__(self, item: str, description:str , price: int):
         self.item = item
         self.description= description
@@ -16,4 +14,13 @@ class shop:
 ranitem = random.choice(items)
 print (ranitem)
 
-shop_items.append(ranitem)
+with open("./json/shop.json", "r") as f:
+    shop_items = json.load(f)
+    shop_items.append(ranitem)
+
+new_file = "updated.json"
+with open(new_file, "w") as f:
+    json_string = json.dumps(shop_items)
+    f.write(json_string)
+os.remove("shop.json")
+os.rename(new_file, "shop.json")

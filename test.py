@@ -1,84 +1,42 @@
-# import pygame module in this program 
-import pygame 
+import json
+import os
+import random
 
-# activate the pygame library . 
-# initiate pygame and give permission 
-# to use pygame's functionality. 
-pygame.init() 
+# Load items from 'items.json'
+with open("items.json", encoding="utf8") as test:
+    items = json.load(test)
 
-# create the display surface object 
-# of specific dimension..e(500, 500). 
-win = pygame.display.set_mode((500, 500)) 
+# Define Item class
+class Item:
+    def __init__(self, item: str, description: str, price: int):
+        self.item = item
+        self.description = description
+        self.price = price
 
-# set the pygame window name 
-pygame.display.set_caption("Moving rectangle") 
+# Randomly pick an item from the items list
+ranitem = random.choice(items)
+print(ranitem)
 
-# object current co-ordinates 
-x = 200
-y = 200
+# Read the shop items from 'shop.json' with error handling
+shop_items = []
+try:
+    with open("./json/shop.json", "r") as f:
+        shop_items = json.load(f)  # Load existing items
+except json.JSONDecodeError:
+    print("shop.json is empty or invalid. Initializing with an empty list.")
+except FileNotFoundError:
+    print("shop.json file not found. Creating a new one.")
 
-# dimensions of the object 
-width = 20
-height = 20
+# Append the random item
+shop_items.append(ranitem)
 
-# velocity / speed of movement 
-vel = 5
+# Save the updated list back to the 'shop.json' file
+new_file = "updated.json"
+with open(new_file, "w") as f:
+    json_string = json.dumps(shop_items, indent=4)  # Pretty print JSON
+    f.write(json_string)
 
-# Indicates pygame is running 
-run = True
+# Replace the old 'shop.json' with the updated one
+os.remove("shop.json")
+os.rename(new_file, "shop.json")
 
-# infinite loop 
-while run: 
-	# creates time delay of 10ms 
-	pygame.time.delay(10) 
-	
-	# iterate over the list of Event objects 
-	# that was returned by pygame.event.get() method. 
-	for event in pygame.event.get(): 
-		
-		# if event object type is QUIT 
-		# then quitting the pygame 
-		# and program both. 
-		if event.type == pygame.QUIT: 
-			
-			# it will make exit the while loop 
-			run = False
-	# stores keys pressed 
-	keys = pygame.key.get_pressed() 
-	
-	# if left arrow key is pressed 
-	if keys[pygame.K_a] and x>0: 
-		
-		# decrement in x co-ordinate 
-		x -= vel 
-		
-	# if left arrow key is pressed 
-	if keys[pygame.K_d] and x<500-width: 
-		
-		# increment in x co-ordinate 
-		x += vel 
-		
-	# if left arrow key is pressed 
-	if keys[pygame.K_w] and y>0: 
-		
-		# decrement in y co-ordinate 
-		y -= vel 
-		
-	# if left arrow key is pressed 
-	if keys[pygame.K_s] and y<500-height: 
-		# increment in y co-ordinate 
-		y += vel 
-		
-			
-	# completely fill the surface object 
-	# with black colour 
-	win.fill((0, 0, 0)) 
-	
-	# drawing object on screen which is rectangle here 
-	pygame.draw.rect(win, (255, 0, 0), (x, y, width, height)) 
-	
-	# it refreshes the window 
-	pygame.display.update() 
-
-# closes the pygame window 
-pygame.quit() 
