@@ -1,42 +1,28 @@
 import json
-import os
 import random
 
-# Load items from 'items.json'
-with open("items.json", encoding="utf8") as test:
-    items = json.load(test)
+test= open("items.json", encoding="utf8")
+items= json.load(test)
 
-# Define Item class
-class Item:
-    def __init__(self, item: str, description: str, price: int):
-        self.item = item
-        self.description = description
-        self.price = price
 
-# Randomly pick an item from the items list
-ranitem = random.choice(items)
-print(ranitem)
+# New JSON to add an item to
+new_json = {
+    "inventory": []
+}
+item_to_add = random.choice(items)  
 
-# Read the shop items from 'shop.json' with error handling
-shop_items = []
 try:
-    with open("./json/shop.json", "r") as f:
-        shop_items = json.load(f)  # Load existing items
-except json.JSONDecodeError:
-    print("shop.json is empty or invalid. Initializing with an empty list.")
+    with open('shop.json', 'r') as shop_file:
+        shop_data = json.load(shop_file)
 except FileNotFoundError:
-    print("shop.json file not found. Creating a new one.")
+    shop_data = {"inventory": []}  # Start with an empty inventory if the file doesn't exist
 
-# Append the random item
-shop_items.append(ranitem)
+# Step 4: Add the extracted item to the 'inventory' in 'shop.json'
+shop_data["inventory"].append(item_to_add)
 
-# Save the updated list back to the 'shop.json' file
-new_file = "updated.json"
-with open(new_file, "w") as f:
-    json_string = json.dumps(shop_items, indent=4)  # Pretty print JSON
-    f.write(json_string)
+# Step 5: Write the updated shop_data back to 'shop.json'
+with open('shop.json', 'w') as shop_file:
+    json.dump(shop_data, shop_file, indent=4)
 
-# Replace the old 'shop.json' with the updated one
-os.remove("shop.json")
-os.rename(new_file, "shop.json")
-
+# Optional: Print the updated shop.json content
+print(json.dumps(shop_data, indent=4))

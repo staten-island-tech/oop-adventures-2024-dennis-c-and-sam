@@ -1,0 +1,24 @@
+{
+    "inventory": [
+        {
+            "item": "speed_potion",
+            "description": "Increases speed",
+            "price": 5
+        },
+        {
+            "item": "speed_potion",
+            "description": "Increases speed",
+            "price": 5
+        },
+        {
+            "item": "speed_potion",
+            "description": "Increases speed",
+            "price": 5
+        },
+        {
+            "item": "ladder",
+            "description": "allows you jump over one wall",
+            "price": 10
+        }
+    ]
+}
