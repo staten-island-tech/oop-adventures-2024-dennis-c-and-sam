@@ -2,37 +2,43 @@ import json
 import random
 import os
 
-test= open("items.json", encoding="utf8")
-items= json.load(test)
+# Define the item class
+class Item:
+    def __init__(self, name: str, description: str, price: int):
+        self.name = name
+        self.description = description
+        self.price = price
 
-# New JSON to add an item to
-new_json = {
-    "inventory": []
-}
+    def to_dict(self):
+        # Convert the item object to a dictionary for JSON serialization
+        return {"item": self.name, "description": self.description, "price": self.price}
 
+# Define a list of available items
+item_dict = [
+    {"name": "speed_potion", "description": "Increases speed", "price": 5},
+    {"name": "ladder", "description": "Allows you to jump over one wall", "price": 10},
+    {"name": "slingshot", "description": "Stuns monster for a short amount of time", "price": 15}
+]
+
+# Initialize a new inventory if the file doesn't exist
+if not os.path.exists('shop.json'):
+    new_json = {"inventory": []}
+else:
+    # Read the existing content from the file
+    with open('shop.json', 'r') as shop_file:
+        new_json = json.load(shop_file)
+
+# Add 3 random items to the inventory
 for i in range(3):
+    item_data = random.choice(item_dict)
+    item_to_add = Item(item_data["name"], item_data["description"], item_data["price"])
 
-    item_to_add = random.choice(items)  
+    # Add the item to the inventory
+    new_json["inventory"].append(item_to_add.to_dict())
 
-    try:
-        with open('shop.json', 'r') as shop_file:
-            shop_data = json.load(shop_file)
-    except FileNotFoundError:
-        shop_data = {"inventory": []}  # Start with an empty inventory if the file doesn't exist
+# Write the updated inventory back to the shop.json file
+with open('shop.json', 'w') as shop_file:
+    json.dump(new_json, shop_file, indent=4)
 
-    # Step 4: Add the extracted item to the 'inventory' in 'shop.json'
-    shop_data["inventory"].append(item_to_add)
-
-    # Step 5: Write the updated shop_data back to 'shop.json'
-    with open('shop.json', 'w') as shop_file:
-        json.dump(shop_data, shop_file, indent=4)
-
-    # Optional: Print the updated shop.json content
-    print(json.dumps(shop_data, indent=4))
-
-""" new_file = "update.json"
-    with open(new_file, "w")as f:
-        json_string = json.dumps(shop_data)
-        f.write(json_string)
-    os.remove("shop.json")
-    os.rename(new_file) """
+# Optional: Print the updated shop.json content
+print(json.dumps(new_json, indent=4))

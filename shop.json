@@ -1,1 +1,8 @@
-{"inventory": [{"item": "speed_potion", "description": "Increases speed", "price": 5}]}
+{
+    "inventory": [
+        {
+            "item": "speed_potion",
+            "description": "Increases speed",
+            "price": 5
+        },
+        
