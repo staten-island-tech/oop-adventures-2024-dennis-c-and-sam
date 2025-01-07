@@ -1,44 +1,70 @@
-import json
 import random
-import os
 
-# Define the item class
 class Item:
     def __init__(self, name: str, description: str, price: int):
         self.name = name
         self.description = description
         self.price = price
 
-    def to_dict(self):
-        # Convert the item object to a dictionary for JSON serialization
-        return {"item": self.name, "description": self.description, "price": self.price}
-
-# Define a list of available items
+# List of items
 item_dict = [
-    {"name": "speed_potion", "description": "Increases speed", "price": 5},
-    {"name": "ladder", "description": "Allows you to jump over one wall", "price": 10},
-    {"name": "slingshot", "description": "Stuns monster for a short amount of time", "price": 15}
+    ("speed_potion", "Increases speed", 5),
+    ("ladder", "Allows you to jump over one wall", 10),
+    ("dash", "Makes you dash in a certain direction", 5)
 ]
 
-# Initialize a new inventory if the file doesn't exist
-if not os.path.exists('shop.json'):
-    new_json = {"inventory": []}
-else:
-    # Read the existing content from the file
-    with open('shop.json', 'r') as shop_file:
-        new_json = json.load(shop_file)
+# List to hold item instances
+shop_items = []
 
-# Add 3 random items to the inventory
-for i in range(3):
-    item_data = random.choice(item_dict)
-    item_to_add = Item(item_data["name"], item_data["description"], item_data["price"])
+# Randomly selecting items from the list and creating Item objects
+for item_data in item_dict:
+    shop_items.append(Item(item_data[0], item_data[1], item_data[2]))
 
-    # Add the item to the inventory
-    new_json["inventory"].append(item_to_add.to_dict())
+class Player:
+    def __init__(self, inventory=None, money=0, speed=0):
+        if inventory is None:
+            inventory = []  # Initialize inventory as an empty list if not provided
+        self.inventory = inventory
+        self.money = money
+        self.speed = speed
 
-# Write the updated inventory back to the shop.json file
-with open('shop.json', 'w') as shop_file:
-    json.dump(new_json, shop_file, indent=4)
+    def buy(self, item):
+        # Check if the player has enough money to buy the item
+        if self.money >= item.price:
+            self.inventory.append(item)
+            self.money -= item.price
+            print(f"You have bought {item.name}. You now have {self.money} money left.")
+        else:
+            print("You don't have enough money for this item!")
 
-# Optional: Print the updated shop.json content
-print(json.dumps(new_json, indent=4))
+# Create a player object
+player = Player(money=20)
+
+# Shopping loop
+shopping = ""
+while shopping != "done":
+    print("\nWelcome to the shop!")
+    print("Items available for sale:")
+    for i, item in enumerate(shop_items):
+        print(f"{i + 1}. {item.name} - {item.description} - Price: {item.price} money")
+
+    shopping = input("What would you like to buy? Type 'done' to stop shopping: ").capitalize()
+
+    if shopping == "Done":
+        print("You are done shopping.")
+        break
+
+    # Handle buying an item
+    try:
+        item_index = int(shopping) - 1
+        if 0 <= item_index < len(shop_items):
+            item_to_buy = shop_items[item_index]
+            player.buy(item_to_buy)
+        else:
+            print("Invalid item selection.")
+    except ValueError:
+        print("Invalid input. Please select an item by its number or type 'done'.")
+
+print("\nYour final inventory:")
+for item in player.inventory:
+    print(f"{item.name}: {item.description}")
