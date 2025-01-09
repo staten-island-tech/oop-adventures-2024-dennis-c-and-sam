@@ -26,6 +26,7 @@ class player():
         if self.money >= item.price:
             self.inventory.append(item)
             self.money -= item.price
+            shop_items.remove(item)
             print(f"You have bought {item.name}. You now have {self.money} money left.")
         else:
             print("You don't have enough money for this item!")
@@ -54,4 +55,5 @@ while shopping.lower() != "done":
         print("Item not found!")
 
 for items in mc.inventory:
+    print("Your inventory:")
     print(f"{items.name}: {items.description}")
