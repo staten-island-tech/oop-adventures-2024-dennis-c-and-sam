@@ -1,4 +1,36 @@
 import random
+import pygame
+
+pygame.init()
+
+# Define Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+
+# Define Screen Dimensions
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Shop Interface")
+
+def draw_shop():
+    screen.fill(WHITE)
+    font = pygame.font.Font(None, 40)
+    title_text = font.render("Welcome to the Shop!", True, BLACK)
+    screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 20))
+
+
+
+
+
+
+
+
+
+
+
 
 class Item:
         def __init__(self, name: str, description:str , price: int,):
