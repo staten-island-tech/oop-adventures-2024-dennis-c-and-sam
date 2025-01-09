@@ -17,7 +17,7 @@ for i in range(3):
             shop_items.append(Item(*item_random))
 
 class player():
-    def __init__(self,inventory,money,speed):
+    def __init__(self,inventory:list,money:int,speed:int):
         self.inventory = inventory
         self.money = money
         self.speed = speed
@@ -50,6 +50,10 @@ while shopping.lower() != "done":
             mc.buy(items)
             item_found = True
             break
+
+    if shop_items==[]:
+        print("No more items left in the shop!")
+        break
 
     if not item_found:
         print("Item not found!")
