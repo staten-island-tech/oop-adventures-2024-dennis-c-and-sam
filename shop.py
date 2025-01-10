@@ -30,6 +30,13 @@ class player():
             print(f"You have bought {item.name}. You now have {self.money} money left.")
         else:
             print("You don't have enough money for this item!")
+
+    def use(self, item):
+        if item in self.inventory:
+            print(f"You have used {item.name}.")
+            self.inventory.remove(item)
+        else:
+            print("You don't have this item in your inventory!")
         
 mc = player(inventory=[],money=100,speed=10)
 
@@ -58,6 +65,24 @@ while shopping.lower() != "done":
     if not item_found:
         print("Item not found!")
 
+print("Your inventory:")
 for items in mc.inventory:
-    print("Your inventory:")
     print(f"{items.name}: {items.description}")
+
+useyn = ""
+while useyn != "no":
+    useyn=input("would you like to use an item?").lower()
+    if useyn == "yes":
+            use_item = input("Which item would you like to use? ")
+            for items in mc.inventory:
+                if items.name.lower() == use_item:
+                    mc.use(items)
+                    break
+                else:
+                    print("Item not found!")
+    if useyn == "no":
+            print("Goodbye!")
+            break
+    else:
+            print("Invalid input!")
+            

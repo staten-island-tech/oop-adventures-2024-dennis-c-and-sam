@@ -23,8 +23,8 @@ while running:
             running = False
 
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_1:  # Select Rhythm Game
-                current_game = "rhythm_game"
+            if event.key == pygame.K_1:  
+                current_game = "shop"
                 os.system("python shop.py")
 
     screen.fill(WHITE)
