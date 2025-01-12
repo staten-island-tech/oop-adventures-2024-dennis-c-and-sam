@@ -71,18 +71,20 @@ for items in mc.inventory:
 
 useyn = ""
 while useyn != "no":
-    useyn=input("would you like to use an item?").lower()
+    useyn = input("Would you like to use an item? (yes/no): ").lower()
     if useyn == "yes":
-            use_item = input("Which item would you like to use? ")
-            for items in mc.inventory:
-                if items.name.lower() == use_item:
-                    mc.use(items)
-                    break
-                else:
-                    print("Item not found!")
-    if useyn == "no":
-            print("Goodbye!")
-            break
+        use_item = input("Which item would you like to use? ")
+        item_found = False
+        for items in mc.inventory:
+            if items.name.lower() == use_item:
+                mc.use(items)
+                item_found = True
+                break
+        if not item_found:
+            print("Item not found!")
+    elif useyn == "no":
+        print("Goodbye!")
+        break
     else:
-            print("Invalid input!")
+        print("Invalid input! Please enter 'yes' or 'no'.")
             
