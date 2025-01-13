@@ -1,5 +1,6 @@
 import random
 
+
 class Item:
         def __init__(self, name: str, description:str , price: int,):
             self.name = name
@@ -17,10 +18,9 @@ for i in range(3):
             shop_items.append(Item(*item_random))
 
 class player():
-    def __init__(self,inventory:list,money:int,speed:int):
+    def __init__(self,inventory:list,money:int):
         self.inventory = inventory
         self.money = money
-        self.speed = speed
 
     def buy(self, item):
         if self.money >= item.price:
@@ -35,10 +35,8 @@ class player():
         if item in self.inventory:
             print(f"You have used {item.name}.")
             self.inventory.remove(item)
-        else:
-            print("You don't have this item in your inventory!")
         
-mc = player(inventory=[],money=100,speed=10)
+mc = player(inventory=[],money=100)
 
 shopping = ""
 while shopping.lower() != "done":
@@ -65,12 +63,11 @@ while shopping.lower() != "done":
     if not item_found:
         print("Item not found!")
 
-print("Your inventory:")
-for items in mc.inventory:
-    print(f"{items.name}: {items.description}")
-
 useyn = ""
 while useyn != "no":
+    print("Your inventory:")
+    for items in mc.inventory:
+        print(f"{items.name}: {items.description}")
     useyn = input("Would you like to use an item? (yes/no): ").lower()
     if useyn == "yes":
         use_item = input("Which item would you like to use? ")
