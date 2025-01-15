@@ -1,94 +1,50 @@
 import pygame
-import os
+import threading
+import queue
 
-# Constants
-TILE_SIZE = 64
-WIDTH = TILE_SIZE * 8
-HEIGHT = TILE_SIZE * 8
-
-# Initialize Pygame
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Maze Game')
+screen = pygame.display.set_mode((300, 300))
+quit_game = False
 
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+commands = queue.Queue()
 
-# Load images
-tiles = {
-    'empty': pygame.Surface((TILE_SIZE, TILE_SIZE)),
-    'wall': pygame.Surface((TILE_SIZE, TILE_SIZE)),
-    'goal': pygame.Surface((TILE_SIZE, TILE_SIZE)),
-    'door': pygame.Surface((TILE_SIZE, TILE_SIZE)),
-    'key': pygame.Surface((TILE_SIZE, TILE_SIZE))
-}
+pos = pygame.Vector2(10, 10)
 
-tiles['empty'].fill(WHITE)
-tiles['wall'].fill(BLACK)
-tiles['goal'].fill((0, 255, 0))
-tiles['door'].fill((255, 0, 0))
-tiles['key'].fill((0, 0, 255))
+m = {'w': (0, -10),
+     'a': (-10, 0),
+     's': (0, 10),
+     'd': (10, 0)}
 
-# Maze layout
-maze = [
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 2, 0, 1],
-    [1, 0, 1, 0, 1, 1, 3, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 0, 0, 1],
-    [1, 0, 1, 4, 1, 0, 0, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-]
+class Input(threading.Thread):
+  def run(self):
+    while not quit_game:
+      command = input()
+      commands.put(command)
 
-# Player and positions
-player_pos = [1, 1]
+i = Input()
+i.start()
 
-def can_move_to(pos):
-    row, col = pos
-    if row < 0 or row >= len(maze) or col < 0 or col >= len(maze[0]):
-        return False
-    return maze[row][col] != 1  # Only block movement if the tile is a wall
+old_pos = []
 
-# Game loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            new_pos = player_pos[:]
-            if event.key == pygame.K_UP:
-                new_pos[1] -= 1
-            elif event.key == pygame.K_DOWN:
-                new_pos[1] += 1
-            elif event.key == pygame.K_LEFT:
-                new_pos[0] -= 1
-            elif event.key == pygame.K_RIGHT:
-                new_pos[0] += 1
+while not quit_game:
+  try:
+    command = commands.get(False)
+  except queue.Empty:
+    command = None
 
-            if can_move_to(new_pos):
-                player_pos = new_pos
+  if command in m:
+    old_pos.append((int(pos.x), int(pos.y)))
+    pos += m[command]
 
-    # Draw the maze
-    screen.fill(WHITE)
-    for row in range(len(maze)):
-        for col in range(len(maze[row])):
-            tile = tiles['empty']
-            if maze[row][col] == 1:
-                tile = tiles['wall']
-            elif maze[row][col] == 2:
-                tile = tiles['goal']
-            elif maze[row][col] == 3:
-                tile = tiles['door']
-            elif maze[row][col] == 4:
-                tile = tiles['key']
-            screen.blit(tile, (col * TILE_SIZE, row * TILE_SIZE))
+  for e in pygame.event.get():
+    if e.type == pygame.QUIT:
+      print("press enter to exit")
+      quit_game = True
 
-    # Draw the player
-    pygame.draw.rect(screen, (0, 255, 0), (player_pos[0] * TILE_SIZE, player_pos[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+  screen.fill((0, 0, 0))
+  for p in old_pos:
+      pygame.draw.circle(screen, (75, 0, 0), p, 10, 2)
+  pygame.draw.circle(screen, (200, 0, 0), (int(pos.x), int(pos.y)), 10, 2)
+  pygame.display.flip()
 
-    pygame.display.flip()
-
-pygame.quit()
+i.join()

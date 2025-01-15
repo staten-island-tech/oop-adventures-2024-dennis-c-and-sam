@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 
+
 # Initialize pygame
 pygame.init()
 
@@ -114,6 +115,7 @@ def main():
 
     # Main game loop
     running = True
+    win=False
     while running:
         WINDOW.fill(BACKGROUND)  # Fill the window with the background color
 
@@ -131,14 +133,15 @@ def main():
 
         # Check if the player reaches the exit
         if player_x == exit_x and player_y == exit_y:
+            win=True
             font = pygame.font.SysFont(None, 55)
             text = font.render("You Win!", True, (0, 255, 0))
             WINDOW.blit(text, (WIDTH // 3, HEIGHT // 3))
             pygame.display.flip()
             pygame.time.wait(2000)  # Wait for 2 seconds before closing
-            subprocess.Popen(["python", "shoptest.py"])
+            subprocess.Popen(["python", "shop.py"])
             running = False
-            
+
         # Check if the timer has run out
         if remaining_time <= 0:
             # Display a "You Lose!" message
@@ -148,6 +151,7 @@ def main():
             pygame.display.flip()
             pygame.time.wait(2000)  # Wait for 2 seconds before closing
             running = False  # End the game
+            
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -171,6 +175,7 @@ def main():
 
     pygame.quit()
     sys.exit()
+
 
 
 if __name__ == "__main__":

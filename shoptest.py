@@ -1,5 +1,5 @@
 import pygame
-import os
+import subprocess
 pygame.init()
 
 screen_width = 800
@@ -29,7 +29,7 @@ while running:
             if event.key == pygame.K_1:
                 text = "You pressed 1"  # Set text when "1" is pressed
                 current_game = "shop"
-                os.system("python shop.py")
+                subprocess.Popen(["python", "shop.py"])
 
     screen.fill(WHITE)
     
