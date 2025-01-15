@@ -71,6 +71,7 @@ while shopping.lower() != "done":
 
 
 
+
 # useyn = ""
 # while useyn != "no":
 #     print("Your inventory:")
