@@ -52,7 +52,7 @@ while shopping.lower() != "done":
     shopping = input("What would you like to buy? Type 'done' if done shopping: ").lower()
 
     if shopping == "done":
-        subprocess.Popen(["python", "fingame.py"])
+        subprocess.Popen(["python", "game.py"])
         break
 
     item_found = False

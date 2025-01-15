@@ -1,196 +1,238 @@
 import pygame
-from pygame.locals import *
+import random
+import os
+import sys
+import subprocess
+
+
+
+# Initialize pygame
 pygame.init()
-screen = pygame.display.set_mode((600, 600))
-pygame.display.set_caption("Your vision")
-exit = False
-paused = False
-#displays https://stackoverflow.com/questions/47803512/wall-collision-in-pygame
-WallColor = (67,64,64)
-UserColor = (78,82,124)
-ButtonColor = (255,255,255)
-ButtonLightUp = ()
-Menutext = pygame.font.SysFont('Corbel',20) .render('menu' , True , ButtonColor)
-width = screen.get_width() 
-height = screen.get_height()
-UserX = 305
 
-UserY = 307
+# Set up the display
+WIDTH, HEIGHT = 800, 800
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Maze Generator with Timer and Exit")
 
-playerhitbox = (UserX,UserY)
+# Constants
+CELL_SIZE = 20
+COLS = WIDTH // CELL_SIZE
+ROWS = HEIGHT // CELL_SIZE
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+VISITED = (200, 200, 200)
+PATH = (0, 0, 255)
+BACKGROUND = (0, 0, 0)
+PLAYER_COLOR = (255, 0, 0)
+EXIT_COLOR = (0, 255, 0)
+TIMER_COLOR = (0, 0, 255)  # Blue color for the timer
 
+# Directions: Up, Right, Down, Left
+DIRECTIONS = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
+# Maze grid structure
+maze = [[0] * COLS for _ in range(ROWS)]
+visited = [[False] * COLS for _ in range(ROWS)]
 
-#https://electronstudio.github.io/pygame-zero-book/chapters/maze.html 
+# Define the exit position (to be determined later)
+exit_x, exit_y = -1, -1
 
-while not exit:
-    pygame.time.Clock().tick(60)  
-    for event in pygame.event.get(): 
-        if event.type == pygame.QUIT: 
-            exit = True
-            
-    class GameLog:
-        def movement():
-            global UserX
-            global UserY
+# Timer variables
+start_time = pygame.time.get_ticks()  # Get the starting time in milliseconds
+countdown_time = 90000  # 30 seconds countdown (in milliseconds)
 
-            screen.fill((0,0,0))
-            pygame.draw.circle(screen, UserColor,(UserX,UserY),5,0)
-            if pygame.key.get_pressed()[K_LEFT]:
-                LastX = UserX
-                UserX -= 1
-            if pygame.key.get_pressed()[K_RIGHT]:
-                LastX = UserX
-                UserX += 1
-            if pygame.key.get_pressed()[K_UP]:
-                LastY = UserY
-                UserY -= 1
-            if pygame.key.get_pressed()[K_DOWN]:
-                LastY = UserY
-                UserY += 1
-        def button():
-            pygame.draw.rect(screen,ButtonColor, pygame.Rect(545,5,50,25),1)
-            screen.blit(Menutext , (547,7))
-            if event.type == pygame.MOUSEBUTTONDOWN: 
-                if 545 <= pygame.mouse.get_pos()[0] <= 545 + 50 and 5 <= pygame.mouse.get_pos()[1] <= 5 + 25:
-                    global paused
-                    paused = True
-        def gamePaused():
-            global paused
-            if paused == True:
+class Item:
+    def __init__(self, name: str, description: str, price: int):
+        self.name = name
+        self.description = description
+        self.price = price
 
-                screen.blit(pygame.font.SysFont('Corbel',40) .render('Paused' , True , ButtonColor), (240,100))
-                screen.blit(pygame.font.SysFont('Corbel',40) .render('Resume' , True , ButtonColor), (233,165))
-                pygame.draw.rect(screen, ButtonColor, pygame.Rect(220,160,150,50),1)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if 220 <= pygame.mouse.get_pos()[0] <= 220 + 150 and 160 <= pygame.mouse.get_pos()[1] <= 160 + 50:
-                        paused = False
-        def walls():
-            global UserX
-            global UserY
-            maze = [
-                [1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 1, 2, 0, 1],
-                [1, 0, 1, 0, 1, 1, 0, 1],
-                [1, 0, 1, 0, 0, 0, 0, 1],
-                [1, 0, 1, 0, 1, 0, 0, 1],
-                [1, 0, 1, 0, 1, 0, 0, 1],
-                [1, 0, 1, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1]
-            ]  
-            if  75 => UserX, < 75 and 0 => UserY > y:  
-                position = maze[0][0]
-            if  150 => UserX, < 150 and 0 => UserY > y:
-                UserY -= 1
-            if  225 => UserX, < 225 and 0 => UserY > y:
-                UserY -= 1
-            if  300 => UserX, < 300 and 0 => UserY > y:
-                UserY -= 1
-            if  375 => UserX, < 375 and 0 => UserY > y:
-                UserY -= 1
-            if  450 => UserX, < 450 and 0 => UserY > y:
-                UserY -= 1
-            if  525 => UserX, < 525 and 0 => UserY > y:
-                UserY -= 1
-            if  600 => UserX, < 600 and 0 => UserY > y:
-                UserY -= 1
-            if  0 => UserX, < 0 and -75 => UserY > y:  
-                
-            if  75 => UserX, < 75 and 75 => UserY > y:
-            if  150 => UserX, < 150 and 75 => UserY > y:
-            if  225 => UserX, < 225 and 75 => UserY > y:
-            if  300 => UserX, < 300 and 75 => UserY > y:
-            if  375 => UserX, < 375 and 75 => UserY > y:
-            if  450 => UserX, < 450 and 75 => UserY > y:
-            if  525 => UserX, < 525 and 75 => UserY > y:
-            if  600 => UserX, < 600 and 75 => UserY > y:
-            if  0 => UserX, < 0 and 150 => UserY > y:
-            if  75 => UserX, < 75 and 150 => UserY > y:
-            if  150 => UserX, < 150 and 150 => UserY > y:
-            if  225 => UserX, < 225 and 150 => UserY > y:
-            if  300 => UserX, < 300 and 150 => UserY > y:
-            if  375 => UserX, < 375 and 150 => UserY > y:
-            if  450 => UserX, < 450 and 150 => UserY > y:
-            if  525 => UserX, < 525 and 150 => UserY > y:
-            if  600 => UserX, < 600 and 150 => UserY > y:
-            if  0 => UserX, < 0 and 225 => UserY > y:
-            if  75 => UserX, < 75 and 225 => UserY > y:
-            if  150 => UserX, < 150 and 225 => UserY > y:
-            if  225 => UserX, < 225 and 225 => UserY > y:
-            if  300 => UserX, < 300 and 225 => UserY > y:
-            if  375 => UserX, < 375 and 225 => UserY > y:
-            if  450 => UserX, < 450 and 225 => UserY > y:
-            if  525 => UserX, < 525 and 225 => UserY > y:
-            if  600 => UserX, < 600 and 225 => UserY > y:
-            if  0 => UserX, < 0 and 300 => UserY > y:
-            if  75 => UserX, < 75 and 300 => UserY > y:
-            if  150 => UserX, < 150 and 300 => UserY > y:
-            if  225 => UserX, < 225 and 300 => UserY > y:
-            if  300 => UserX, < 300 and 300 => UserY > y:
-            if  375 => UserX, < 375 and 300 => UserY > y:
-            if  450 => UserX, < 450 and 300 => UserY > y:
-            if  525 => UserX, < 525 and 300 => UserY > y:
-            if  600 => UserX, < 600 and 300 => UserY > y:
-            if  0 => UserX, < 0 and 375 => UserY > y:
-            if  75 => UserX, < 75 and 375 => UserY > y:
-            if  150 => UserX, < 150 and 375 => UserY > y:
-            if  225 => UserX, < 225 and 375 => UserY > y:
-            if  300 => UserX, < 300 and 375 => UserY > y:
-            if  375 => UserX, < 375 and 375 => UserY > y:
-            if  450 => UserX, < 450 and 375 => UserY > y:
-            if  525 => UserX, < 525 and 375 => UserY > y:
-            if  600 => UserX, < 600 and 375 => UserY > y:
-            if  0 => UserX, < 0 and 450 => UserY > y:
-            if  75 => UserX, < 75 and 450 => UserY > y:
-            if  150 => UserX, < 150 and 450 => UserY > y:
-            if  225 => UserX, < 225 and 450 => UserY > y:
-            if  300 => UserX, < 300 and 450 => UserY > y:
-            if  375 => UserX, < 375 and 450 => UserY > y:
-            if  450 => UserX, < 450 and 450 => UserY > y:
-            if  525 => UserX, < 525 and 450 => UserY > y:
-            if  600 => UserX, < 600 and 450 => UserY > y:
-            if  0 => UserX, < 0 and 525 => UserY > y:
-            if  75 => UserX, < 75 and 525 => UserY > y:
-            if  150 => UserX, < 150 and 525 => UserY > y:
-            if  225 => UserX, < 225 and 525 => UserY > y:
-            if  300 => UserX, < 300 and 525 => UserY > y:
-            if  375 => UserX, < 375 and 525 => UserY > y:
-            if  450 => UserX, < 450 and 525 => UserY > y:
-            if  525 => UserX, < 525 and 525 => UserY > y:
-            if  600 => UserX, < 600 and 525 => UserY > y:
-            if  0 => UserX, < 0 and 600 => UserY > y:
-            if  75 => UserX, < 75 and 600 => UserY > y:
-            if  150 => UserX, < 150 and 600 => UserY > y:
-            if  225 => UserX, < 225 and 600 => UserY > y:
-            if  300 => UserX, < 300 and 600 => UserY > y:
-            if  375 => UserX, < 375 and 600 => UserY > y:
-            if  450 => UserX, < 450 and 600 => UserY > y:
-            if  525 => UserX, < 525 and 600 => UserY > y:
-            if  600 => UserX, < 600 and 600 => UserY > y:
+class Player:
+    def __init__(self, inventory: list, money: int):
+        self.inventory = inventory
+        self.money = money
+
+    def use(self, item):
+        if item in self.inventory:
+            print(f"You have used {item.name}.")
+            self.inventory.remove(item)
 
 
+def carve_maze(x, y):
+    visited[y][x] = True
+    maze[y][x] = 1
 
-                
-                
-
-    if paused == False:
-        #User location
-        GameLog.movement()
-
-        #Map
-        GameLog.walls()
-
-        #npc location
-
-
-        #item location and pick up
+    # Randomize directions to carve the maze
+    random.shuffle(DIRECTIONS)
+    for dx, dy in DIRECTIONS:
+        nx, ny = x + dx * 2, y + dy * 2
+        if 0 <= nx < COLS and 0 <= ny < ROWS and not visited[ny][nx]:
+            maze[y + dy][x + dx] = 1  # Carve the wall between cells
+            carve_maze(nx, ny)
 
 
-        #buttons(inventory,menu,etc)
-        GameLog.button()
+def draw_maze():
+    for y in range(ROWS):
+        for x in range(COLS):
+            color = WHITE if maze[y][x] == 0 else BLACK
+            pygame.draw.rect(WINDOW, color, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+
+def draw_player(player_x, player_y):
+    pygame.draw.rect(WINDOW, PLAYER_COLOR, (player_x * CELL_SIZE, player_y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+
+def draw_exit():
+    pygame.draw.rect(WINDOW, EXIT_COLOR, (exit_x * CELL_SIZE, exit_y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+
+def find_exit():
+    global exit_x, exit_y
+    # Try to place the exit far away from the start (top-left corner)
+    while True:
+        # Randomly pick an empty space
+        x = random.randint(1, COLS - 2)  # Avoid edges to make sure it's not out of bounds
+        y = random.randint(1, ROWS - 2)
+
+        # The exit must be in an open space (part of the path)
+        if maze[y][x] == 1 and (x != 0 or y != 0):  # Exclude the starting position
+            exit_x, exit_y = x, y
+            break
+
+
+def draw_timer():
+    global countdown_time
+    # Calculate the remaining time in seconds
+    elapsed_time = pygame.time.get_ticks() - start_time
+    remaining_time = max(countdown_time - elapsed_time, 0)
+    remaining_seconds = remaining_time // 1000  # Convert milliseconds to seconds
+
+    # Display the remaining time in blue
+    font = pygame.font.SysFont(None, 55)
+    text = font.render(f"Time: {remaining_seconds}s", True, TIMER_COLOR)  # Blue timer color
+    WINDOW.blit(text, (WIDTH - 150, 10))
+
+    return remaining_time
+
+
+def main():
+    global exit_x, exit_y, start_time, countdown_time
+    
+    start_x, start_y = 0, 0
+    carve_maze(start_x, start_y)
+
+    # Find a valid exit that is far from the start position
+    find_exit()
+
+    # Initial player position
+    player_x, player_y = start_x, start_y
+
+    # Set the clock to control the speed of the block
+    clock = pygame.time.Clock()
+
+
+    # Main game loop
+    running = True
+    win=False
+    while running:
+        WINDOW.fill(BACKGROUND)  # Fill the window with the background color
+
+        # Draw the maze first
+        draw_maze()
+
+        # Draw the player (red block) last to ensure it's on top of the maze walls
+        draw_player(player_x, player_y)
+
+        # Draw the exit (green square)
+        draw_exit()
+
+        # Draw the countdown timer in blue
+        remaining_time = draw_timer()
+
+        # Check if the player reaches the exit
+        if player_x == exit_x and player_y == exit_y:
+            font = pygame.font.SysFont(None, 55)
+            text = font.render("You Win!", True, (0, 255, 0))
+            WINDOW.blit(text, (WIDTH // 3, HEIGHT // 3))
+            pygame.display.flip()
+            pygame.time.wait(2000)  # Wait for 2 seconds before closing
+            subprocess.Popen(["python", "shop.py",])
+            running = False
+         
+
+
+        # Check if the timer has run out
+        if remaining_time <= 0:
+            # Display a "You Lose!" message
+            font = pygame.font.SysFont(None, 55)
+            text = font.render("You Lose!", True, (255, 0, 0))
+            WINDOW.blit(text, (WIDTH // 3, HEIGHT // 3))
+            pygame.display.flip()
+            pygame.time.wait(2000)  # Wait for 2 seconds before closing
+            running = False  # End the game
+
+
+        # Check if the timer has run out
+        if remaining_time <= 0:
+            font = pygame.font.SysFont(None, 55)
+            text = font.render("You Lose!", True, (255, 0, 0))
+            WINDOW.blit(text, (WIDTH // 3, HEIGHT // 3))
+            pygame.display.flip()
+            pygame.time.wait(2000)  # Wait for 2 seconds before closing
+            running = False
+
+        #player_speed = 1
+
+        # speed_potion_duration = 0        
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         running = False
+
+        # keys = pygame.key.get_pressed()
+
+        # # Use items based on key presses
+
+        # if keys[pygame.K_1]:
+        #     item = mc.use("speed_potion")
+        #     if item:
+        #         player_speed = 1.5  # Increase player speed
+        #         speed_potion_duration = 5000  # Speed potion lasts for 5 seconds
+        # elif keys[pygame.K_2]:
+        #     item = mc.use("speed_potion_2")
+        #     if item:
+        #         player_speed = 2  # Increase player speed
+        #         speed_potion_duration = 5000  # Speed potion lasts for 5 seconds
+        # elif keys[pygame.K_3]:
+        #     item = mc.use("speed_potion_long")
+        #     if item:
+        #         player_speed = 1.5  # Increase player speed
+        #         speed_potion_duration = 10000  # Speed potion lasts for 10 seconds
         
-     
-    GameLog.gamePaused()
+
+        # # Handle speed potion duration
+        # if speed_potion_duration > 0:
+        #     speed_potion_duration -= clock.get_time()
+        #     if speed_potion_duration <= 0:
+                #player_speed = 1  # Reset player speed
+
+        # Get key presses to control the player
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and player_x > 0 and maze[player_y][player_x - 1] == 1:
+            player_x -= 1
+        if keys[pygame.K_RIGHT] and player_x < len(maze[0]) - 1 and maze[player_y][player_x + 1] == 1:
+            player_x += 1
+        if keys[pygame.K_UP] and player_y > 0 and maze[player_y - 1][player_x] == 1:
+            player_y -= 1
+        if keys[pygame.K_DOWN] and player_y < len(maze) - 1 and maze[player_y + 1][player_x] == 1:
+            player_y += 1
 
 
-    pygame.display.update()
+
+        clock.tick(10)
+        pygame.display.flip()
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
